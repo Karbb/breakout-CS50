@@ -54,6 +54,11 @@ function PlayState:update(dt)
     self.paddle:update(dt)
     self.ball:update(dt)
 
+    -- CS50: powerup update
+    if not self.powerup == nil then
+        self.powerup:update(dt)
+    end 
+
     if self.ball:collides(self.paddle) then
         -- raise ball above paddle in case it goes below it, then reverse dy
         self.ball.y = self.paddle.y - 8
@@ -86,6 +91,12 @@ function PlayState:update(dt)
 
             -- trigger the brick's hit function, which removes it from play
             brick:hit()
+
+            -- CS50: spawn a new powerup if possible
+            if brick.isSpawner then
+                self.powerup = Powerup(brick.x + brick.width / 2, brick. y)
+                print("POWERUP" + self.powerup)
+            end
 
             -- if we have enough points, recover a point of health
             if self.score > self.recoverPoints then
@@ -210,6 +221,11 @@ function PlayState:render()
 
     self.paddle:render()
     self.ball:render()
+
+     -- CS50: powerup render
+    if not self.powerup == nil then
+        self.powerup:render()
+    end
 
     renderScore(self.score)
     renderHealth(self.health)

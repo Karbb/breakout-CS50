@@ -20,3 +20,12 @@ VIRTUAL_HEIGHT = 243
 
 -- paddle movement speed
 PADDLE_SPEED = 200
+
+-- CS50: power-up gravity
+POWERUP_GRAVITY = 20
+
+-- CS50: odds of powerup spawning
+POWERUP_SPAWNING_ODDS = 0.5
+
+-- CS50: ball base speed
+BALL_SPEED = 100

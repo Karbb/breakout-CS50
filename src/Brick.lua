@@ -78,6 +78,9 @@ function Brick:init(x, y)
 
     -- spread of particles; normal looks more natural than uniform
     self.psystem:setAreaSpread('normal', 10, 10)
+
+    -- CS50: used to determine if brick should spawn or not a powerup when destroyed
+    self.isSpawner = false;
 end
 
 --[[
@@ -126,6 +129,14 @@ function Brick:hit()
     if not self.inPlay then
         gSounds['brick-hit-1']:stop()
         gSounds['brick-hit-1']:play()
+
+        -- CS50: When a brick is destroyed, roll a dice to check if a powerup is spawned or not
+        if(rnd() <= POWERUP_SPAWNING_ODDS) then
+            print(rnd(), POWERUP_SPAWNING_ODDS)
+            self.isSpawner = true;
+        else
+            self.isSpawner = false;
+        end
     end
 end
 

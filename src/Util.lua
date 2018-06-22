@@ -125,3 +125,6 @@ function GenerateQuadsBalls(atlas)
 
     return quads
 end
+
+-- CS50: ABBREVIAZIONE DI S5S
+rnd = math.random
