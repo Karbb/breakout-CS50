@@ -9,9 +9,7 @@
 
 Powerup = Class{}
 
-function Powerup:init(x, y)
-    print("init powerup. Coordinate: ")
-    print(x, y)
+function Powerup:init(x, y, type)
     -- simple positional and dimensional variables
     self.width = 8
     self.height = 8
@@ -21,8 +19,9 @@ function Powerup:init(x, y)
 
     -- these variables are for keeping track of our velocity on both the
     -- X and Y axis, since the ball can move in two dimensions
-    self.dy = -POWERUP_GRAVITY
+    self.dy = POWERUP_GRAVITY
     self.dx = 0
+    self.type = type
 end
 
 --[[
@@ -51,6 +50,41 @@ function Powerup:update(dt)
     self.y = self.y + self.dy * dt
 end
 
+function Powerup:activate(game)
+    if(self.type == POWERUP_TYPE[1]) then
+        
+        index = rnd(1, #game.balls)
+        motherBall = game.balls[index]
+
+        tempBall1 = Ball()
+        lazyClone(motherBall, tempBall1)
+        tempBall1.dy = tempBall1.dy - 20
+
+        tempBall2 = Ball()
+        lazyClone(motherBall, tempBall2)
+        tempBall2.skin = math.random(7)
+
+        table.insert(game.balls, tempBall1)
+        table.insert(game.balls, tempBall2)
+    end
+end
+
+function Powerup:destroy()
+    self = nil
+end
+
 function Powerup:render()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height )
+end
+
+function lazyClone(ball, tempBall)
+    tempBall.x = ball.x
+    tempBall.y = ball.y
+    tempBall.dx = ball.dx
+    tempBall.dy = ball.dy
+    tempBall.skin = math.random(7)
+
+    if(tempBall.dy > 0) then
+        tempBall.dy = - tempBall.dy
+    end
 end

@@ -126,3 +126,78 @@ function LevelMaker.createMap(level)
         return bricks
     end
 end
+
+--CS50: easy to test map function
+function LevelMaker.createTestMap(level)
+    local bricks = {}
+
+    -- randomly choose the number of rows
+    local numRows = 3
+
+    -- randomly choose the number of columns, ensuring odd
+    local numCols = 13
+    numCols = numCols % 2 == 0 and (numCols + 1) or numCols
+
+    -- highest possible spawned brick color in this level; ensure we
+    -- don't go above 3
+    local highestTier = 3
+
+    -- highest color of the highest tier, no higher than 5
+    local highestColor = 3
+
+    -- lay out bricks such that they touch each other and fill the space
+    for y = 1, numRows do
+        -- whether we want to enable skipping for this row
+        local skipPattern = false
+
+        -- whether we want to enable alternating colors for this row
+        local alternatePattern = false
+        
+        -- choose two colors to alternate between
+        local alternateColor1 = math.random(1, highestColor)
+        local alternateColor2 = math.random(1, highestColor)
+        local alternateTier1 = math.random(0, highestTier)
+        local alternateTier2 = math.random(0, highestTier)
+        
+        -- used only when we want to skip a block, for skip pattern
+        local skipFlag = false
+
+        -- used only when we want to alternate a block, for alternate pattern
+        local alternateFlag = false
+
+        -- solid color we'll use if we're not skipping or alternating
+        local solidColor = math.random(1, highestColor)
+        local solidTier = math.random(0, highestTier)
+
+        for x = 1, numCols do
+            
+
+            b = Brick(
+                -- x-coordinate
+                (x-1)                   -- decrement x by 1 because tables are 1-indexed, coords are 0
+                * 32                    -- multiply by 32, the brick width
+                + 8                     -- the screen should have 8 pixels of padding; we can fit 13 cols + 16 pixels total
+                + (13 - numCols) * 16,  -- left-side padding for when there are fewer than 13 columns
+                
+                -- y-coordinate
+                y * 16                  -- just use y * 16, since we need top padding anyway
+            )
+
+                b.color = 1
+                b.tier = 0
+
+
+            table.insert(bricks, b)
+
+            -- Lua's version of the 'continue' statement
+            ::continue::
+        end
+    end 
+
+    -- in the event we didn't generate any bricks, try again
+    if #bricks == 0 then
+        return self.createTestMap(level)
+    else
+        return bricks
+    end
+end

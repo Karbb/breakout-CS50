@@ -29,3 +29,5 @@ POWERUP_SPAWNING_ODDS = 0.5
 
 -- CS50: ball base speed
 BALL_SPEED = 100
+
+POWERUP_TYPE = {"ball_multiplayer"}
