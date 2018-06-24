@@ -40,6 +40,9 @@ function Paddle:init(skin)
     -- the variant is which of the four paddle sizes we currently are; 2
     -- is the starting size, as the smallest is too tough to start with
     self.size = 2
+
+    -- CS50: paddle scaling on x-axis
+    self.sx = 1
 end
 
 function Paddle:update(dt)
@@ -65,6 +68,18 @@ function Paddle:update(dt)
     else
         self.x = math.min(VIRTUAL_WIDTH - self.width, self.x + self.dx * dt)
     end
+end
+
+--CS50: paddle grow
+function Paddle:grow()
+    self.size = math.min(4, self.size + 1)
+    self.width = math.min(128, self.width + 32)
+end
+
+--CS50: paddle shrink
+function Paddle:shrink()
+    self.size = math.max(1, self.size - 1)
+    self.width = math.max(32, self.width - 32)
 end
 
 --[[

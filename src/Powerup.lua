@@ -11,8 +11,8 @@ Powerup = Class{}
 
 function Powerup:init(x, y, type)
     -- simple positional and dimensional variables
-    self.width = 8
-    self.height = 8
+    self.width = 16
+    self.height = 16
 
     self.x = x
     self.y = y
@@ -51,7 +51,7 @@ function Powerup:update(dt)
 end
 
 function Powerup:activate(game)
-    if(self.type == POWERUP_TYPE[1]) then
+    if(self.type == POWERUP_TYPE[1][1]) then
         
         index = rnd(1, #game.balls)
         motherBall = game.balls[index]
@@ -74,7 +74,8 @@ function Powerup:destroy()
 end
 
 function Powerup:render()
-    love.graphics.rectangle("fill", self.x, self.y, self.width, self.height )
+    love.graphics.draw(gTextures['main'], gFrames['powerups'][9],
+        self.x, self.y)
 end
 
 function lazyClone(ball, tempBall)

@@ -109,7 +109,7 @@ function PlayState:update(dt)
 
                     -- CS50: spawn a new powerup if possible
                     if brick.isSpawner then
-                        powerup = Powerup(brick.x + brick.width / 2, brick.y, POWERUP_TYPE[1])
+                        powerup = Powerup(brick.x + brick.width / 2 - 8, brick.y, POWERUP_TYPE[1][1])
                         table.insert(self.powerups, powerup)
                     end
 
@@ -120,6 +120,9 @@ function PlayState:update(dt)
 
                         -- multiply recover points by 2
                         self.recoverPoints = math.min(100000, self.recoverPoints * 2)
+
+                        -- CS50: shrink paddle when a point of health is recovered
+                        self.paddle:shrink()
 
                         -- play recover sound effect
                         gSounds['recover']:play()
@@ -154,6 +157,10 @@ function PlayState:update(dt)
             if ball.y >= VIRTUAL_HEIGHT then
                 if #self.balls == 1 then
                     self.health = self.health - 1
+
+                    --CS50: grow the paddle when a point of health is lost
+                    self.paddle:grow()
+
                     gSounds['hurt']:play()
 
                     if self.health == 0 then
