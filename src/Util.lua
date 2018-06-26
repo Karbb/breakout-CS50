@@ -55,7 +55,7 @@ end
     we have to return a subset of GenerateQuads.
 ]]
 function GenerateQuadsBricks(atlas)
-    return table.slice(GenerateQuads(atlas, 32, 16), 1, 21)
+    return table.slice(GenerateQuads(atlas, 32, 16), 1, 23)
 end
 
 --[[
@@ -102,7 +102,7 @@ end
     manually, since they are in an awkward part of the sheet and small.
 ]]
 function GenerateQuadsBalls(atlas)
-    local x = 96
+    local x = 128
     local y = 48
 
     local counter = 1
@@ -114,7 +114,7 @@ function GenerateQuadsBalls(atlas)
         counter = counter + 1
     end
 
-    x = 96
+    x = 128
     y = 56
 
     for i = 0, 2 do

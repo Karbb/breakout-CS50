@@ -42,6 +42,9 @@ function PlayState:enter(params)
     self.balls = {}
 
     table.insert(self.balls, self.ball)
+
+    self.lockedBrick = true
+    self.keyPowerup = nil
 end
 
 function PlayState:update(dt)
@@ -58,6 +61,11 @@ function PlayState:update(dt)
         return
     end
 
+    if self.lockedBrick and self.keyPowerup == nil then
+        self.keyPowerup = Powerup(rnd(1, VIRTUAL_WIDTH - 16), 0, "key")
+        table.insert(self.powerups, self.keyPowerup)
+    end
+
     -- update positions based on velocity
     self.paddle:update(dt)
 
@@ -70,6 +78,7 @@ function PlayState:update(dt)
     -- CS50: powerup update
     if #self.powerups > 0 then
         for k, powerup in pairs(self.powerups) do
+            
             powerup:update(dt)
 
             -- POWERUP COLLISION LOGIC
@@ -81,7 +90,13 @@ function PlayState:update(dt)
                 ]]
                 powerup:activate(self)
 
-                powerup:destroy()
+            end
+
+            if powerup.y > VIRTUAL_HEIGHT then
+                table.remove(self.powerups, k)
+                if tostring(powerup) == tostring(self.keyPowerup) then
+                    self.keyPowerup = nil
+                end
             end
         end
     end
@@ -109,7 +124,7 @@ function PlayState:update(dt)
 
                     -- CS50: spawn a new powerup if possible
                     if brick.isSpawner then
-                        powerup = Powerup(brick.x + brick.width / 2 - 8, brick.y, POWERUP_TYPE[1][1])
+                        powerup = Powerup(brick.x + brick.width / 2 - 8, brick.y, "ball_multiplier")
                         table.insert(self.powerups, powerup)
                     end
 

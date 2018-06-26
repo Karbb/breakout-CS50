@@ -123,8 +123,18 @@ function LevelMaker.createMap(level)
     if #bricks == 0 then
         return self.createMap(level)
     else
+        bricks = addLockedBrick(bricks)
         return bricks
     end
+end
+
+--CS50
+function addLockedBrick(bricks)
+    brickIndex = rnd(1, #bricks)
+    bricks[brickIndex].color = 6
+    bricks[brickIndex].tier = 0
+
+    return bricks
 end
 
 --CS50: easy to test map function

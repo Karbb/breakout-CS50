@@ -47,6 +47,12 @@ paletteColors = {
         ['r'] = 251,
         ['g'] = 242,
         ['b'] = 54
+    },
+    -- black
+    [6] = {
+        ['r'] = 255,
+        ['g'] = 255,
+        ['b'] = 255
     }
 }
 
@@ -116,6 +122,8 @@ function Brick:hit()
         else
             self.color = self.color - 1
         end
+    elseif self.color == 6 then
+        
     else
         -- if we're in the first tier and the base color, remove brick from play
         if self.color == 1 then
@@ -132,7 +140,6 @@ function Brick:hit()
 
         -- CS50: When a brick is destroyed, roll a dice to check if a powerup is spawned or not
         if(rnd() <= POWERUP_SPAWNING_ODDS) then
-            print(rnd(), POWERUP_SPAWNING_ODDS)
             self.isSpawner = true;
         else
             self.isSpawner = false;

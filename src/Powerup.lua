@@ -51,8 +51,7 @@ function Powerup:update(dt)
 end
 
 function Powerup:activate(game)
-    if(self.type == POWERUP_TYPE[1][1]) then
-        
+    if(self.type == "ball_multiplier") then
         index = rnd(1, #game.balls)
         motherBall = game.balls[index]
 
@@ -69,13 +68,14 @@ function Powerup:activate(game)
     end
 end
 
-function Powerup:destroy()
-    self = nil
-end
-
 function Powerup:render()
-    love.graphics.draw(gTextures['main'], gFrames['powerups'][9],
-        self.x, self.y)
+    if(self.type == "ball_multiplier") then
+        frame = gFrames['powerups'][9]
+    elseif self.type == "key" then
+        frame = gFrames['powerups'][10]
+    end
+    love.graphics.draw(gTextures['main'], frame,
+            self.x, self.y)
 end
 
 function lazyClone(ball, tempBall)
