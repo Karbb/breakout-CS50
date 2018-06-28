@@ -40,6 +40,8 @@ function Paddle:init(skin)
     -- the variant is which of the four paddle sizes we currently are; 2
     -- is the starting size, as the smallest is too tough to start with
     self.size = 2
+
+    self.power = {}
 end
 
 function Paddle:update(dt)
@@ -84,6 +86,17 @@ end
     that corresponds to the proper skin and size.
 ]]
 function Paddle:render()
+    if #self.power > 0 then
+        for k, power in pairs(self.power) do
+            if(power.type == "key") then
+                --CS50: birubiru effect rubbato da winter. MUAHAHAH
+                local factor = math.cos( (love.timer.getTime() - power.timer) / MAX_KEY_TIME * 60.0)
+                factor = factor * 0.5 + 0.5
+                love.graphics.setColor(255, 255, 255, 255 * factor)
+            end
+        end
+    end
     love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],
         self.x, self.y)
+        love.graphics.setColor(255, 255, 255, 255)
 end

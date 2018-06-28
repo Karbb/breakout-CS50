@@ -48,6 +48,8 @@ function PlayState:enter(params)
 end
 
 function PlayState:update(dt)
+
+    -- pause functionality 
     if self.paused then
         if love.keyboard.wasPressed('space') then
             self.paused = false
@@ -61,13 +63,28 @@ function PlayState:update(dt)
         return
     end
 
+    -- key powerup spawning controller
     if self.lockedBrick and self.keyPowerup == nil then
         self.keyPowerup = Powerup(rnd(1, VIRTUAL_WIDTH - 16), 0, "key")
         table.insert(self.powerups, self.keyPowerup)
     end
 
+    if #self.paddle.power > 0 then
+        for k, power in pairs(self.paddle.power) do
+            
+            if self.paddle.power[k].type == "key" then
+                if (love.timer.getTime() - self.paddle.power[k].timer) < MAX_KEY_TIME then
+                    self.lockedBrick = false;
+                else
+                    self.lockedBrick = true;
+                    table.remove(self.paddle.power, k)
+                end
+            end
+        end
+    end
+    
     -- update positions based on velocity
-    self.paddle:update(dt)
+    self.paddle:update(dt, self)
 
     if #self.balls > 0 then
         for k, ball in pairs(self.balls) do
@@ -117,10 +134,16 @@ function PlayState:update(dt)
                 if brick.inPlay and ball:collides(brick) then
 
                     -- add to score
-                    self.score = self.score + (brick.tier * 200 + brick.color * 25)
+                    if(brick.color ~= 6) then
+                        self.score = self.score + (brick.tier * 200 + brick.color * 25)
+                    else
+                        if(brick.tier == 1) then
+                            self.score = self.score + (1000 + brick.color * 25)
+                        end
+                    end
 
                     -- trigger the brick's hit function, which removes it from play
-                    brick:hit()
+                    brick:hit(self)
 
                     -- CS50: spawn a new powerup if possible
                     if brick.isSpawner then
@@ -204,7 +227,7 @@ function PlayState:update(dt)
 
     -- for rendering particle systems
     for k, brick in pairs(self.bricks) do
-        brick:update(dt)
+        brick:update(dt, self)
     end
 
     if love.keyboard.wasPressed('escape') then
@@ -322,6 +345,4 @@ function ballBrickCollision(ball, brick)
             if math.abs(ball.dy) < 150 then
                 ball.dy = ball.dy * 1.02
             end
-
-            
 end

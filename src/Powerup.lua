@@ -22,6 +22,8 @@ function Powerup:init(x, y, type)
     self.dy = POWERUP_GRAVITY
     self.dx = 0
     self.type = type
+
+    self.timer = 0
 end
 
 --[[
@@ -65,6 +67,9 @@ function Powerup:activate(game)
 
         table.insert(game.balls, tempBall1)
         table.insert(game.balls, tempBall2)
+    elseif self.type == "key" then
+        print("key activate")
+        table.insert(game.paddle.power, { type = self.type, timer = love.timer.getTime() } )
     end
 end
 

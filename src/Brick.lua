@@ -93,7 +93,7 @@ end
     Triggers a hit on the brick, taking it out of play if at 0 health or
     changing its color otherwise.
 ]]
-function Brick:hit()
+function Brick:hit(game)
     -- set the particle system to interpolate between two colors; in this case, we give
     -- it our self.color but with varying alpha; brighter for higher tiers, fading to 0
     -- over the particle's lifetime (the second color)
@@ -115,15 +115,17 @@ function Brick:hit()
 
     -- if we're at a higher tier than the base, we need to go down a tier
     -- if we're already at the lowest color, else just go down a color
-    if self.tier > 0 then
+    if self.color == 6 then
+        if(self.tier == 1) then
+            self.inPlay = false
+        end
+    elseif self.tier > 0 then
         if self.color == 1 then
             self.tier = self.tier - 1
             self.color = 5
         else
             self.color = self.color - 1
         end
-    elseif self.color == 6 then
-        
     else
         -- if we're in the first tier and the base color, remove brick from play
         if self.color == 1 then
@@ -147,8 +149,16 @@ function Brick:hit()
     end
 end
 
-function Brick:update(dt)
+function Brick:update(dt, game)
     self.psystem:update(dt)
+
+    if (self.color == 6 and self.inPlay) then
+       if(game.lockedBrick == false) then
+            self.tier = 1
+       else 
+            self.tier = 0
+       end
+    end
 end
 
 function Brick:render()

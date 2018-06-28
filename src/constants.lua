@@ -25,9 +25,9 @@ PADDLE_SPEED = 200
 POWERUP_GRAVITY = 20
 
 -- CS50: odds of powerup spawning
-POWERUP_SPAWNING_ODDS = 0.5
+POWERUP_SPAWNING_ODDS = 0.1
 
 -- CS50: ball base speed
 BALL_SPEED = 100
 
-POWERUP_TYPE = {{"ball_multiplier",9}}
+MAX_KEY_TIME = 5
