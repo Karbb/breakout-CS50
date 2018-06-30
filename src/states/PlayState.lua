@@ -43,8 +43,10 @@ function PlayState:enter(params)
 
     table.insert(self.balls, self.ball)
 
-    self.lockedBrick = true
+    self.lockedBrick = checkLockedBrick(self.bricks)
     self.keyPowerup = nil
+
+    self.attractor = false
 end
 
 function PlayState:update(dt)
@@ -65,22 +67,33 @@ function PlayState:update(dt)
 
     -- key powerup spawning controller
     if self.lockedBrick and self.keyPowerup == nil then
-        self.keyPowerup = Powerup(rnd(1, VIRTUAL_WIDTH - 16), 0, "key")
+        self.keyPowerup = KeyUnlock(rnd(1, VIRTUAL_WIDTH - 16), 0)
         table.insert(self.powerups, self.keyPowerup)
     end
 
     if #self.paddle.power > 0 then
-        for k, power in pairs(self.paddle.power) do
-            
+        for k, power in pairs(self.paddle.power) do  
             if self.paddle.power[k].type == "key" then
                 if (love.timer.getTime() - self.paddle.power[k].timer) < MAX_KEY_TIME then
                     self.lockedBrick = false;
                 else
                     self.lockedBrick = true;
                     table.remove(self.paddle.power, k)
+                    self.keyPowerup = nil
+                end
+            elseif self.paddle.power[k].type == "attractor" then
+                if (love.timer.getTime() - self.paddle.power[k].timer) < MAX_ATTRACTOR_TIME then
+                    self.attractor = true;
+                else
+                    self.attractor = false;
+                    table.remove(self.paddle.power, k)
                 end
             end
         end
+    end
+
+    if self.attractor and love.keyboard.wasPressed('z') then
+       self.attractor = false
     end
     
     -- update positions based on velocity
@@ -88,7 +101,7 @@ function PlayState:update(dt)
 
     if #self.balls > 0 then
         for k, ball in pairs(self.balls) do
-            ball:update(dt)
+            ball:update(dt, self.paddle)
         end
     end
 
@@ -102,16 +115,13 @@ function PlayState:update(dt)
             if powerup:collides(self.paddle) then
                 table.remove(self.powerups, k)
 
-                --[[
-                    POWERUP LOGIC
-                ]]
+            -- POWERUP ACTIVATION LOGIC
                 powerup:activate(self)
-
             end
 
             if powerup.y > VIRTUAL_HEIGHT then
                 table.remove(self.powerups, k)
-                if tostring(powerup) == tostring(self.keyPowerup) then
+                if(powerup.type == "key") then
                     self.keyPowerup = nil
                 end
             end
@@ -121,7 +131,7 @@ function PlayState:update(dt)
     if #self.balls > 0 then
         for k, ball in pairs(self.balls) do
             if ball:collides(self.paddle) then
-                ballPaddleCollision(ball, self.paddle)
+                ballPaddleCollision(ball, self.paddle, self.attractor)
             end
         end
     end
@@ -147,7 +157,11 @@ function PlayState:update(dt)
 
                     -- CS50: spawn a new powerup if possible
                     if brick.isSpawner then
-                        powerup = Powerup(brick.x + brick.width / 2 - 8, brick.y, "ball_multiplier")
+                        if rnd() > 0.5 then
+                            powerup = BallMultiplier(brick.x + brick.width / 2 - 8, brick.y)
+                        else 
+                            powerup = Attractor(brick.x + brick.width / 2 - 8, brick.y)
+                        end
                         table.insert(self.powerups, powerup)
                     end
 
@@ -207,6 +221,7 @@ function PlayState:update(dt)
                             highScores = self.highScores
                         })
                     else
+                        self.paddle.power = {}
                         gStateMachine:change('serve', {
                             paddle = self.paddle,
                             bricks = self.bricks,
@@ -281,7 +296,7 @@ function PlayState:checkVictory()
     return true
 end
 
-function ballPaddleCollision(ball, paddle)
+function ballPaddleCollision(ball, paddle, attractor)
     -- raise ball above paddle in case it goes below it, then reverse dy
         ball.y = paddle.y - 8
         ball.dy = -ball.dy
@@ -297,6 +312,8 @@ function ballPaddleCollision(ball, paddle)
         elseif ball.x > paddle.x + (paddle.width / 2) and paddle.dx > 0 then
             ball.dx = 50 + (8 * math.abs(paddle.x + paddle.width / 2 - ball.x))
         end
+
+        ball.stuck = attractor
 
         gSounds['paddle-hit']:play()
 end
@@ -345,4 +362,13 @@ function ballBrickCollision(ball, brick)
             if math.abs(ball.dy) < 150 then
                 ball.dy = ball.dy * 1.02
             end
+end
+
+function checkLockedBrick(bricks)
+    for k, brick in pairs(bricks) do
+        if(brick.color == 6) then
+            return true
+        end
+    end
+    return false
 end

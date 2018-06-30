@@ -42,9 +42,13 @@ function Paddle:init(skin)
     self.size = 2
 
     self.power = {}
+
+    --CS50: var to store last X value
+    self.lastX = nil
 end
 
 function Paddle:update(dt)
+    self.lastX = self.x
     -- keyboard input
     if love.keyboard.isDown('left') then
         self.dx = -PADDLE_SPEED
@@ -67,6 +71,11 @@ function Paddle:update(dt)
     else
         self.x = math.min(VIRTUAL_WIDTH - self.width, self.x + self.dx * dt)
     end
+
+    --CS50: fix to set 0 dX when paddle is not moving because walls
+    if self.lastX == self.x then
+        self.dx = 0
+    end
 end
 
 --CS50: paddle grow
@@ -86,14 +95,18 @@ end
     that corresponds to the proper skin and size.
 ]]
 function Paddle:render()
+    --CS50: render the flashing effect based on last powerup activated
     if #self.power > 0 then
-        for k, power in pairs(self.power) do
-            if(power.type == "key") then
-                --CS50: birubiru effect rubbato da winter. MUAHAHAH
-                local factor = math.cos( (love.timer.getTime() - power.timer) / MAX_KEY_TIME * 60.0)
-                factor = factor * 0.5 + 0.5
-                love.graphics.setColor(255, 255, 255, 255 * factor)
-            end
+        local power = self.power[#self.power]
+         --CS50: birubiru effect rubbato da winter. MUAHAHAH
+        if (power.type == "key") then
+            local factor = math.cos( (love.timer.getTime() - power.timer) / MAX_KEY_TIME * 60.0)
+            factor = factor * 0.5 + 0.5
+            love.graphics.setColor(255, 255, 0, 255 * factor)
+        elseif (power.type == "attractor") then
+            local factor = math.cos( (love.timer.getTime() - power.timer) / MAX_KEY_TIME * 60.0)
+            factor = factor * 0.5 + 0.5
+            love.graphics.setColor(0, 128, 0, 255 * factor)
         end
     end
     love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],

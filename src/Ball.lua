@@ -28,6 +28,9 @@ function Ball:init(skin)
     -- this will effectively be the color of our ball, and we will index
     -- our table of Quads relating to the global block texture using this
     self.skin = skin
+
+    --CS50: Ball attribute to check if is or not stuck because of attractor powerup
+    self.stuck = false
 end
 
 --[[
@@ -61,7 +64,25 @@ function Ball:reset()
     self.dy = 0
 end
 
-function Ball:update(dt)
+function Ball:update(dt, paddle)
+
+    --CS50: Attractor powerup change ball update function
+    if self.stuck then   
+        if(self.x < 0) then
+            self.y = paddle.y
+            self.x = 0
+        elseif (self.x + self.width > VIRTUAL_WIDTH) then
+            self.y = paddle.y
+            self.x = VIRTUAL_WIDTH - self.width
+        else
+            self.x = self.x + paddle.dx * dt
+        end
+        if self.dy < 0 then
+            self.dy = - self.dy
+        end
+        return
+    end
+
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
 

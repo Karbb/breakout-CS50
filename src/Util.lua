@@ -157,5 +157,5 @@ function Clone(orig)
     return copy
 end
 
--- CS50: ABBREVIAZIONE DI S5S
+-- CS50: BEST ABBREVIAZIONE DI @STAVROS EVAH
 rnd = math.random

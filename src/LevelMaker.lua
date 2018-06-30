@@ -123,17 +123,17 @@ function LevelMaker.createMap(level)
     if #bricks == 0 then
         return self.createMap(level)
     else
-        bricks = addLockedBrick(bricks)
-        return bricks
+        return addLockedBrick(bricks)
     end
 end
 
---CS50
+-- CS50: Function that add locked
 function addLockedBrick(bricks)
-    brickIndex = rnd(1, #bricks)
-    bricks[brickIndex].color = 6
-    bricks[brickIndex].tier = 0
-
+    if rnd(0,1) < LOCKED_BRICK_SPAWNING_ODDS then
+        brickIndex = rnd(1, #bricks)
+        bricks[brickIndex].color = 6
+        bricks[brickIndex].tier = 0
+    end
     return bricks
 end
 
@@ -206,8 +206,8 @@ function LevelMaker.createTestMap(level)
 
     -- in the event we didn't generate any bricks, try again
     if #bricks == 0 then
-        return self.createTestMap(level)
+        return self.createMap(level)
     else
-        return bricks
+        return addLockedBrick(bricks)
     end
 end

@@ -28,7 +28,10 @@ require 'src/LevelMaker'
 require 'src/Paddle'
 
 -- CS50: the entities that give temporary power to the paddle or the ball
-require 'src/Powerup'
+require 'src/powerups/Powerup'
+require 'src/powerups/BallMultiplier'
+require 'src/powerups/KeyUnlock'
+require 'src/powerups/Attractor'
 
 -- a basic StateMachine class which will allow us to transition to and from
 -- game states smoothly and avoid monolithic code in one file
