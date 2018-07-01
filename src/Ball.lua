@@ -65,7 +65,6 @@ function Ball:reset()
 end
 
 function Ball:update(dt, paddle)
-
     --CS50: Attractor powerup change ball update function
     if self.stuck then   
         if(self.x < 0) then
@@ -77,12 +76,19 @@ function Ball:update(dt, paddle)
         else
             self.x = self.x + paddle.dx * dt
         end
-        if self.dy < 0 then
-            self.dy = - self.dy
+
+        local mousex, mousey = push:toGame(love.mouse.getX(),love.mouse.getY())
+        
+        if(mousex == nil or mousey == nil) then
+            angle = math.atan2(mousey - self.y + self.width / 2, mousex - self.x  + self.width / 2)
+        
+            self.dx = math.cos(angle) * 100
+            -- negative sin because the system is based on ball, not on game coordinates
+            self.dy = -math.sin(angle) * 100
         end
         return
     end
-
+    
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
 
